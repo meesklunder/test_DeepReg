@@ -1,20 +1,74 @@
 #! /bin/bash
 
-# the Pfam-bsaed prediction results in 208 TFs
-# DeepReg predicts 490 TFs
+# DEEPREG vs PFAM
+# ------------------
 
-# sort both files on their gene name (first column)
+deepreg_results="Data/predictions.txt"
+
+# sort both foles
 sort -k1 Data/Ophcf2.TF.txt | sed 's/ /_/g' > Data/Ophcf2.TF.srt.txt
-sort -k1 Data/predictions.txt > Data/predictions.srt.txt
+sort -k1 $deepreg_results > Data/predictions.srt.txt
 
-# save overlapping and non-overlapping predictions
-join -o1.1,1.2 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt > Data/overlapping_TFs.txt
-join -v1 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt > Data/only_pfam_TFs.txt
-join -v2 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt > Data/only_DeepReg_TFs.txt
+echo -n "nr of TFs by DeepReg: "
+grep -c . Data/predictions.srt.txt
 
-# counting
-grep -c . Data/overlapping_TFs.txt # >> 153 predictions overlap
-grep -c . Data/only_DeepReg_TFs.txt # >> 341 predictions are only from DeepReg
-grep -c . Data/only_pfam_TFs.txt # >> 55 predictions are only from Pfam
+echo -n "overlapping predictions Deepreg vs Pfam: "
+join -o1.1,1.2 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt | grep -c .
 
-grep -c "Fungal_Specific_TF" Data/only_pfam_TFs.txt # >> 16 (of the 96) fungal specific TF's were not found by DeepReg
+echo -n "Only Pfam preds: "
+join -v1 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt | grep -c .
+
+echo -n "Only DeepReg preds: "
+join -v2 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt | grep -c .
+
+echo -n "total Fungal specific in Pfam preds: "
+grep -c "Fungal_Specific_TF" Data/Ophcf2.TF.srt.txt
+
+echo -n "missed fungal specific by DeepReg: "
+grep -c "Fungal_Specific_TF" Data/only_pfam_TFs.txt
+
+# DEEPTFACTOR vs PFAM
+# ----------------
+
+# predicted by running in conda prompt:
+#	python3 tf_running.py -i ./Dataset/Ophcf2.proteins_nostar.fasta -o ./result -g cpu
+
+deeptfactor_results="/home/mobaxterm/Desktop/map/UU/Writing_Assignment/deeptfactor/result/prediction_result.txt"
+
+echo " "
+
+# find total predicted TF's
+echo -n "nr of TFs by deeptfactor: "
+grep -c "True" $deeptfactor_results
+
+# save only positive predictions
+grep "True"  $deeptfactor_results | sort -k1 > Data/deeptfactor_predictions.srt.txt
+
+echo -n "overlapping predictions deeptfactor vs Pfam: "
+join -t $'\t' -o 2.3,1.1,1.2 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | grep -c .
+
+echo -n "Only Pfam preds: "
+join -v1 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | grep -c .
+
+echo -n "Only DeepTFactor preds: "
+join -v2 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | grep -c .
+
+echo -n "total Fungal specific in Pfam preds: "
+grep -c "Fungal_Specific_TF" Data/Ophcf2.TF.srt.txt
+
+echo -n "missed fungal specific by deeptfactor: "
+join -v1 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | grep -c "Fungal_Specific_TF"
+
+# DEEPREG vs DEEPTFACTOR
+# -----------------------
+
+echo " "
+
+echo -n "overlapping predictions deeptfactor vs deepreg: "
+join Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | grep -c .
+
+echo -n "Only deeptfactor preds: "
+join -v1 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | grep -c .
+
+echo -n "Only DeepReg preds: "
+join -v2 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | grep -c .
