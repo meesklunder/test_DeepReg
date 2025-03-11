@@ -72,3 +72,28 @@ join -v1 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | grep -c
 
 echo -n "Only DeepReg preds: "
 join -v2 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | grep -c .
+
+# THREE_WAY COMPARISON
+# ---------------------
+
+echo -n "Only DeepReg (Abc): "
+join -v2 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | join -v1 - Data/Ophcf2.TF.srt.txt | grep -c .
+
+echo -n "Only deeptfactor (aBc): "
+join -v1 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | join -v1 - Data/Ophcf2.TF.srt.txt | grep -c .
+
+echo -n "DeepReg & deeptfactor (ABc): "
+join -o0 Data/deeptfactor_predictions.srt.txt Data/predictions.srt.txt | join -v1 - Data/Ophcf2.TF.srt.txt | grep -c .
+
+echo -n "Only Pfam (abC): "
+join -v1 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt | join -v1 - Data/deeptfactor_predictions.srt.txt | grep -c .
+
+echo -n "DeepReg & Pfam (AbC): "
+join -o0 Data/Ophcf2.TF.srt.txt Data/predictions.srt.txt | join -v1 - Data/deeptfactor_predictions.srt.txt | grep -c .
+
+echo -n "deeptfactor & Pfam (aBC): "
+join -o0 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | join -v1 - Data/predictions.srt.txt | grep -c .
+
+echo -n "All (ABC): "
+join -o0 Data/Ophcf2.TF.srt.txt Data/deeptfactor_predictions.srt.txt | join - Data/predictions.srt.txt | grep -c .
+
