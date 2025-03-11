@@ -1,9 +1,8 @@
 # import modules
-from matplotlib_venn import venn2
+from matplotlib_venn import venn3
 from matplotlib import pyplot as plt
 
-# depict venn diagram
-venn2(subsets = (341, 55, 153), set_labels = ('DeepReg','Pfam'), set_colors=("red", "green"), alpha=0.7)
-
-# save it to a png file
-plt.savefig("venn_pfam_DeepReg.png", dpi=150)
+venn3(subsets=(261, 145, 80, 47, 32, 8, 121), set_labels=('DeepReg', 'DeepTFactor', 'Pfam'), set_colors=("orange", "blue", "red"), alpha=0.7) 
+ 
+plt.title("TF predictions from DeepReg, DeepTFactor and Pfam-based annotation")
+plt.savefig("venn_DeepReg_DeepTFactor_Pfam.png", dpi=150)
