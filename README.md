@@ -1,4 +1,4 @@
-# test_DeepReg
+# Comparing Tf prediction methods
 
 In this project, three ways of predicting Transcription Factor identity from sequences are compared. One is based on the predicted Pfam domains, and has been carried out before. The second is DeepReg, which can be downloaded from [GitHub](https://github.com/LeonardoLed/DeepLearning-_TF). The third is DeepTFactor and can be downloaded from [BitBucket](https://bitbucket.org/kaistsystemsbiology/deeptfactor/src/master/).
 
